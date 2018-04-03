@@ -482,3 +482,6 @@ Outputs:
     WebsiteURL: 
         Description: Webserver URL
         Value: !Sub http://${LoadBalancer.DNSName} 
+    HelloWorld: 
+        Description: test
+        Value: Hello, World
