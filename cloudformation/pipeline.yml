@@ -37,7 +37,7 @@ Parameters:
     GitHubBranch:
         Description: Enter the GitHub branch to monitored
         Type: String
-        Default: master
+        Default: hello-world
 
 Metadata:
 
