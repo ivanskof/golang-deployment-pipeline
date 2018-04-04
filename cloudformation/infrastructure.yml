@@ -23,8 +23,8 @@ Parameters:
 
 Resources:
 
-    Type: "AWS::IAM::User"
-    Properties: 
+  MyEIP:
+    Type: 'AWS::EC2::EIP'
 
 Outputs: 
     HelloWorld: 

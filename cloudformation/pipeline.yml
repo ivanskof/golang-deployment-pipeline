@@ -22,7 +22,7 @@ Parameters:
     GitHubOAuthToken: 
         Description: Create a token with 'repo' and 'admin:repo_hook' permissions here https://github.com/settings/tokens
         Type: String        
-        Default: ed02c5f7fd77e3072fea7690deb3bcf18a990611
+        Default: f0750a591cf1f7f193f1c8aa7c04ea7f39127b0b
 
     GitHubUser:
         Description: Enter GitHub username of the repository owner
