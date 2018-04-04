@@ -12,22 +12,27 @@ Parameters:
         Description: This will be used to name the pipeline and build resources
         Type: String
         AllowedPattern: '[A-Za-z0-9-]+'
+        Default: test-pipeline-ivan
     
     ArtifactS3Bucket:
         Description: An existing S3 bucket within this AWS account
         Type: String
+        Default: test-pipeline-ivan
 
     GitHubOAuthToken: 
         Description: Create a token with 'repo' and 'admin:repo_hook' permissions here https://github.com/settings/tokens
-        Type: String
+        Type: String        
+        Default: ed02c5f7fd77e3072fea7690deb3bcf18a990611
 
     GitHubUser:
         Description: Enter GitHub username of the repository owner
         Type: String
+        Default: ivanskof
 
     GitHubRepository:
         Description: Enter the repository name that should be monitored for changes
         Type: String
+        Default: golang-deployment-pipeline
 
     GitHubBranch:
         Description: Enter the GitHub branch to monitored
@@ -137,19 +142,6 @@ Resources:
                                         "EnvironmentName": "staging",
                                         "ArtifactS3Bucket": "${ArtifactS3Bucket}"
                                     }
-                        - 
-                            Name: DeployApplication
-                            RunOrder: 2
-                            InputArtifacts: 
-                                - Name: Built
-                            ActionTypeId:
-                                Category: Deploy
-                                Owner: AWS
-                                Version: 1
-                                Provider: CodeDeploy
-                            Configuration: 
-                                ApplicationName: !Ref ApplicationName
-                                DeploymentGroupName: staging
                 - 
                     Name: Approvals
                     Actions:
@@ -187,19 +179,6 @@ Resources:
                                         "EnvironmentName": "production",
                                         "ArtifactS3Bucket": "${ArtifactS3Bucket}"
                                     }
-                        - 
-                            Name: DeployApplication
-                            RunOrder: 2
-                            InputArtifacts: 
-                                - Name: Built
-                            ActionTypeId:
-                                Category: Deploy
-                                Owner: AWS
-                                Version: 1
-                                Provider: CodeDeploy
-                            Configuration: 
-                                ApplicationName: !Ref ApplicationName
-                                DeploymentGroupName: production
                         
 
     CodeBuild:
@@ -212,7 +191,7 @@ Resources:
                 Type: CODEPIPELINE
             Environment:
                 ComputeType: BUILD_GENERAL1_SMALL
-                Image: aws/codebuild/golang:1.7.3
+                Image: aws/codebuild/ubuntu-base:14.04
                 Type: LINUX_CONTAINER
                 EnvironmentVariables:
                     - 
