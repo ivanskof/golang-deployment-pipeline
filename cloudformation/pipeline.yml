@@ -12,7 +12,7 @@ Parameters:
         Description: This will be used to name the pipeline and build resources
         Type: String
         AllowedPattern: '[A-Za-z0-9-]+'
-        Default: test-pipeline-ivan
+        Default: test-lambdaline-ivan
     
     ArtifactS3Bucket:
         Description: An existing S3 bucket within this AWS account
@@ -22,7 +22,7 @@ Parameters:
     GitHubOAuthToken: 
         Description: Create a token with 'repo' and 'admin:repo_hook' permissions here https://github.com/settings/tokens
         Type: String        
-        Default: 1cd22c508509a4f52da5836d8a002638914ad872
+        Default: 6f533b0fbd8afdbb10b67042c80551219f5d538e
 
     GitHubUser:
         Description: Enter GitHub username of the repository owner
@@ -37,7 +37,7 @@ Parameters:
     GitHubBranch:
         Description: Enter the GitHub branch to monitored
         Type: String
-        Default: hello-world
+        Default: lambda-line
 
 Metadata:
 
@@ -100,22 +100,23 @@ Resources:
                                 Repo: !Ref GitHubRepository
                                 Branch: !Ref GitHubBranch
                                 OAuthToken: !Ref GitHubOAuthToken
-                -
-                    Name: Build
+                -   
+                    Name: LambdaStage
                     Actions:
                         -
-                            Name: CodeBuild
+                            Name: LambdaInvoke
                             InputArtifacts:
                                 - Name: Source
-                            ActionTypeId: 
-                                Category: Build
+                            ActionTypeId:
+                                Category: Invoke
                                 Owner: AWS
                                 Version: 1
-                                Provider: CodeBuild
+                                Provider: CloudFormation
                             OutputArtifacts:
                                 - Name: Built
                             Configuration: 
-                                ProjectName: !Ref CodeBuild
+                                FunctionName: hello-world-dev-helloName
+                                UserParameters: johnybravo
                 -
                     Name: Staging
                     Actions:
@@ -138,9 +139,7 @@ Resources:
                                 TemplateConfiguration: Built::config/staging.conf
                                 ParameterOverrides: !Sub |
                                     {
-                                        "ApplicationName": "${ApplicationName}",
-                                        "EnvironmentName": "staging",
-                                        "ArtifactS3Bucket": "${ArtifactS3Bucket}"
+                                        "EnvironmentName": "staging"
                                     }
                 - 
                     Name: Approvals
@@ -175,9 +174,7 @@ Resources:
                                 TemplateConfiguration: Built::config/production.conf
                                 ParameterOverrides: !Sub |
                                     {
-                                        "ApplicationName": "${ApplicationName}",
-                                        "EnvironmentName": "production",
-                                        "ArtifactS3Bucket": "${ArtifactS3Bucket}"
+                                        "EnvironmentName": "production"
                                     }
                         
 
