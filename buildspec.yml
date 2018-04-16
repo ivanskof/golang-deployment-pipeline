@@ -12,10 +12,9 @@ phases:
 
   build:
     commands:
-      - echo Nothing to do in the build phase, maybe ...
+      - aws cloudformation package --template-file .\cloudformation\infrastructure.yml --s3-bucket test-pipeline-ivan --output-template-file .\packaged-template
 
 artifacts:
   files:
-    - buildspec.yml
+    - packaged-template
     - config/*
-    - cloudformation/*
