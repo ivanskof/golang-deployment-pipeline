@@ -13,8 +13,11 @@ phases:
   build:
     commands:
       - aws cloudformation package --template-file ./cloudformation/infrastructure.yml --s3-bucket test-pipeline-ivan --output-template-file ./packaged-template
+      
+      - aws cloudformation deploy  --template-file  packaged-template --stack-name changeset-infra-ivan --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM --output table --fail-on-empty-changeset
 
+      - aws cloudformation deploy  --template-file  packaged-template --stack-name changeset-infra-ivan --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM --output table --fail-on-empty-changeset --no-execute-changeset
+      
 artifacts:
   files:
     - packaged-template
-    - config/*

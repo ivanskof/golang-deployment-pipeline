@@ -12,7 +12,7 @@ Parameters:
         Description: This will be used to name the pipeline and build resources
         Type: String
         AllowedPattern: '[A-Za-z0-9-]+'
-        Default: changeset-test-pipeline-ivan
+        Default: changeset-ivan
     
     ArtifactS3Bucket:
         Description: An existing S3 bucket within this AWS account
@@ -22,7 +22,7 @@ Parameters:
     GitHubOAuthToken: 
         Description: Create a token with 'repo' and 'admin:repo_hook' permissions here https://github.com/settings/tokens
         Type: String        
-        Default: 6f533b0fbd8afdbb10b67042c80551219f5d538e
+        Default: 
 
     GitHubUser:
         Description: Enter GitHub username of the repository owner
@@ -116,66 +116,7 @@ Resources:
                                 - Name: Built
                             Configuration: 
                                 ProjectName: !Ref CodeBuild
-                -
-                    Name: Staging
-                    Actions:
-                        - 
-                            Name: DeployInfrastructure
-                            RunOrder: 1
-                            InputArtifacts:
-                                - Name: Built
-                            ActionTypeId:
-                                Category: Deploy
-                                Owner: AWS
-                                Version: 1
-                                Provider: CloudFormation
-                            Configuration:
-                                ActionMode: REPLACE_ON_FAILURE
-                                RoleArn: !Sub ${CodePipelineCloudFormationRole.Arn}
-                                Capabilities: CAPABILITY_NAMED_IAM
-                                StackName: !Sub ${ApplicationName}-staging
-                                TemplatePath: Built::cloudformation/infrastructure.yml
-                                TemplateConfiguration: Built::config/staging.conf
-                                ParameterOverrides: !Sub |
-                                    {
-                                        "EnvironmentName": "staging"
-                                    }
-                - 
-                    Name: Approvals
-                    Actions:
-                        - 
-                            Name: ProductionGate
-                            ActionTypeId: 
-                                Category: Approval
-                                Owner: AWS
-                                Version: 1
-                                Provider: Manual
                                 
-                -
-                    Name: Production
-                    Actions:
-                        - 
-                            Name: DeployInfrastructure
-                            RunOrder: 1
-                            InputArtifacts:
-                                - Name: Built
-                            ActionTypeId:
-                                Category: Deploy
-                                Owner: AWS
-                                Version: 1
-                                Provider: CloudFormation
-                            Configuration:
-                                ActionMode: CREATE_UPDATE
-                                RoleArn: !Sub ${CodePipelineCloudFormationRole.Arn}
-                                Capabilities: CAPABILITY_NAMED_IAM
-                                StackName: !Sub ${ApplicationName}-production
-                                TemplatePath: Built::cloudformation/infrastructure.yml
-                                TemplateConfiguration: Built::config/production.conf
-                                ParameterOverrides: !Sub |
-                                    {
-                                        "EnvironmentName": "production"
-                                    }
-                        
 
     CodeBuild:
         Type: AWS::CodeBuild::Project
@@ -234,6 +175,18 @@ Resources:
                                     ],
                                     "Effect": "Allow"
                                 },
+                                {
+                                    "Action": [
+                                        "s3:PutObject",
+                                        "s3:GetObject",
+                                        "S3:GetObjectVersion",
+                                        "S3:GetBucketVersioning"
+                                    ],
+                                    "Resource": [
+                                        "arn:aws:s3:::${ArtifactS3Bucket}/*"
+                                    ],
+                                    "Effect": "Allow"
+                                },                                
                                 {
                                     "Action": [
                                         "codedeploy:CreateDeployment",
@@ -387,6 +340,18 @@ Resources:
                                         "s3:GetObjectVersion",
                                         "s3:PutObject"
                                     ]
+                                },
+                                {
+                                    "Action": [
+                                        "s3:PutObject",
+                                        "s3:GetObject",
+                                        "S3:GetObjectVersion",
+                                        "S3:GetBucketVersioning"
+                                    ],
+                                    "Resource": [
+                                        "arn:aws:s3:::${ArtifactS3Bucket}/*"
+                                    ],
+                                    "Effect": "Allow"
                                 }
                             ]
                         }
