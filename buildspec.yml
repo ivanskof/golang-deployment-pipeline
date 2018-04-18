@@ -13,6 +13,16 @@ phases:
   build:
     commands:
       - aws --version
+      - uname -a
+      - cat /elb/lsb-release
+
+      - aws cloudformation package --template-file ./cloudformation/test.yaml --s3-bucket test-pipeline-ivan --output-template-file ./packaged-test.yaml
+      
+      - aws cloudformation deploy  --template-file  packaged-test.yaml --stack-name changeset-test-ivan --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM --output table
+      - aws cloudformation deploy  --template-file  packaged-test.yaml --stack-name changeset-test-ivan --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM --output table --no-execute-changeset
+
+
+
       - aws cloudformation package --template-file ./cloudformation/infrastructure.yml --s3-bucket test-pipeline-ivan --output-template-file ./packaged-template
       
       - aws cloudformation deploy  --template-file  packaged-template --stack-name changeset-infra-ivan --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM --output table --fail-on-empty-changeset

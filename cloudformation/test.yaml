@@ -1,0 +1,10 @@
+Description: Test
+
+Resources:
+    SubTest:
+        Type: AWS::CloudFormation::Stack
+        Properties:
+            TemplateURL: subtest.yaml
+            Parameters:
+                EnvironmentName: test
+

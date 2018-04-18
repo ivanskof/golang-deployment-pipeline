@@ -1,0 +1,14 @@
+Description: Subtest
+
+Parameters:
+    EnvironmentName:
+        Type: String
+
+Resources:
+  MyEIP:
+    Type: 'AWS::EC2::EIP'
+
+Outputs: 
+  MyEIP: 
+    Description: IP
+    Value: !Ref MyEIP
